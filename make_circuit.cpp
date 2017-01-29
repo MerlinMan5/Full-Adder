@@ -7,11 +7,54 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "transistors.h"
+#include <iostream>
 
- // input_a, input_b, and output are wires
+using namespace std;
 
- // make a NOR gate with input wires for a and b and an output wire for a NOR b
- // the NOR has the same structure as the one in the lecture notes
+// input_a, input_b, and output are wires
+
+// make a NOR gate with input wires for a and b and an output wire for a NOR b
+// the NOR has the same structure as the one in the lecture notes
+void make_xor(circuit *c, int input_a_wire, int input_b_wire, int output_wire)
+{
+	// get a one node
+
+	int one = new_node(c, ONE);
+
+	// get a zero node
+
+	int zero = new_node(c, ZERO);
+
+	// get two P and N transistors
+
+	int p1 = new_node(c, P);
+	int p2 = new_node(c, P);
+	int n1 = new_node(c, P);
+
+	// wire 0: links zero to the sources of N1 and N2
+
+	int wire0 = new_wire(c);
+	attach_node_to_wire(c, zero, wire0, OUTPUT);
+	attach_node_to_wire(c, n1, wire0, INPUT);
+
+	// link input a to the gates of P1 and N2
+
+	attach_node_to_wire(c, p1, input_a_wire, INPUT);
+	attach_node_to_wire(c, p2, input_a_wire, CONTROL);
+
+	// link input b to the gates of P2 and N1
+
+	attach_node_to_wire(c, p1, input_b_wire, CONTROL);
+	attach_node_to_wire(c, n1, input_b_wire, CONTROL);
+	attach_node_to_wire(c, p2, input_b_wire, INPUT);
+
+	// links drains of P2, N2, and N1 to output
+
+	attach_node_to_wire(c, p1, output_wire, OUTPUT);
+	attach_node_to_wire(c, p2, output_wire, OUTPUT);
+	attach_node_to_wire(c, n1, output_wire, OUTPUT);
+
+}
 
 void make_nor(circuit *c, int input_a_wire, int input_b_wire, int output_wire)
 {
@@ -110,6 +153,63 @@ void make_inverter(circuit *c, int input_wire, int output_wire)
 	attach_node_to_wire(c, n, output_wire, OUTPUT);
 }
 
+void make_nand(circuit *c, int input_a_wire, int input_b_wire, int output_wire)
+{
+	// get a one node
+
+	int one = new_node(c, ONE);
+
+	// get a zero node
+
+	int zero = new_node(c, ZERO);
+
+	// get two P and N transistors
+
+	int p1 = new_node(c, P);
+	int p2 = new_node(c, P);
+	int n1 = new_node(c, N);
+	int n2 = new_node(c, N);
+
+
+	int wire0 = new_wire(c);
+	attach_node_to_wire(c, zero, wire0, OUTPUT);
+	attach_node_to_wire(c, n1, wire0, INPUT);
+	
+
+	attach_node_to_wire(c, p2, input_a_wire, CONTROL);
+	attach_node_to_wire(c, n2, input_a_wire, CONTROL);
+
+
+	attach_node_to_wire(c, p1, input_b_wire, CONTROL);
+	attach_node_to_wire(c, n1, input_b_wire, CONTROL);
+
+
+	attach_node_to_wire(c, p1, output_wire, OUTPUT);
+	attach_node_to_wire(c, p2, output_wire, OUTPUT);
+	attach_node_to_wire(c, n2, output_wire, OUTPUT);
+	
+
+	int wire1 = new_wire(c);
+	attach_node_to_wire(c, one, wire1, OUTPUT);
+	attach_node_to_wire(c, p1, wire1, INPUT);
+	attach_node_to_wire(c, p2, wire1, INPUT);
+
+
+	int wire2 = new_wire(c);
+	attach_node_to_wire(c, n1, wire2, OUTPUT);
+	attach_node_to_wire(c, n2, wire2, INPUT);
+}
+
+void make_and(circuit *c, int input_wire_a, int input_wire_b, int output_wire)
+{
+	// get a wire
+
+	int connect_wire = new_wire(c);
+
+	make_nand(c, input_wire_a, input_wire_b, connect_wire);
+
+	make_inverter(c, connect_wire, output_wire);
+}
 // make an OR gate that takes input wires a and b and puts a OR b on the output wire
 // we'll do this the easy way: wire up the NOR of a and b to an inverter
 
@@ -131,7 +231,6 @@ void make_or(circuit *c, int input_wire_a, int input_wire_b, int output_wire)
 }
 
 // this makes the whole circuit with inputs and output
-
 void make_circuit(circuit *c)
 {
 	// two input nodes for the circuit
@@ -158,5 +257,5 @@ void make_circuit(circuit *c)
 	// make an OR oring the inputs and putting the result on the
 	// output wire
 
-	make_or(c, input_wire_a, input_wire_b, output_wire);
+	make_and(c, input_wire_a, input_wire_b, output_wire);
 }
