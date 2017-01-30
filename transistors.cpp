@@ -29,8 +29,8 @@ void initialize_circuit(circuit *c)
 	c->nnodes = 0;
 	c->maxwires = 20;
 	c->maxnodes = 21;
-	c->nodes = (node *) malloc(sizeof(node) * c->maxnodes);
-	c->wires = (wire *) malloc(sizeof(wire) * c->maxwires);
+	c->nodes = (node *)malloc(sizeof(node) * c->maxnodes);
+	c->wires = (wire *)malloc(sizeof(wire) * c->maxwires);
 }
 
 // get an integer representing a new node
@@ -41,7 +41,7 @@ int new_node(circuit *c, int type)
 	{
 		fprintf(stderr, "allocating more nodes\n");
 		c->maxnodes *= 2;
-		node *n = (node *) malloc(sizeof(node) * c->maxnodes);
+		node *n = (node *)malloc(sizeof(node) * c->maxnodes);
 		assert(n);
 		memcpy(n, c->nodes, sizeof(node) * c->nnodes);
 		free(c->nodes);
@@ -60,7 +60,7 @@ int new_wire(circuit *c)
 	{
 		fprintf(stderr, "allocating more wires\n");
 		c->maxwires *= 2;
-		wire *w = (wire *) malloc(sizeof(wire) * c->maxwires);
+		wire *w = (wire *)malloc(sizeof(wire) * c->maxwires);
 		assert(w);
 		memcpy(w, c->wires, sizeof(wire) * c->nwires);
 		free(c->wires);
@@ -112,7 +112,7 @@ int attach_node_to_wire(circuit *c, int n, int w, int port)
 	assert(w >= 0 && w < c->nwires);
 	assert(n >= 0 && n < c->nnodes);
 	p = &c->wires[w];
-	nodenode *nn = (nodenode*) malloc(sizeof(nodenode));
+	nodenode *nn = (nodenode*)malloc(sizeof(nodenode));
 	nn->wired_to = port;
 	nn->n = n;
 	nn->next = NULL;

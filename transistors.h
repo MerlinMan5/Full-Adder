@@ -16,9 +16,9 @@
 // values nodes can have
 
 #define ZERO		0	// node value is zero
-#define ONE		1	// node value is one
-#define BAD_ZERO	2	// bad zero
-#define BAD_ONE		3	// bad one
+#define ONE			1	// node value is one
+#define BAD_ZERO	00	// bad zero
+#define BAD_ONE		11	// bad one
 #define SWITCH_OFF	4	// no value
 #define UNKNOWN		5	// value not computed yet
 #define INVALID		6	// more than one value
